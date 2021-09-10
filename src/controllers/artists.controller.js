@@ -29,6 +29,14 @@ module.exports = {
     let statusCode = 201
   
     try {
+      const  {name, description, code ,image } = request.body
+      const hasValues = (name && description && code && image)
+
+      if (!hasValues) {
+        return response
+          .status(400)
+          .json({ message:"Bad Request" })
+      }
       const artistData = {
         ...request.body
       }
@@ -104,7 +112,8 @@ module.exports = {
       })
 
       if (artist === null) {
-        throw new Error(`Artist with id ${params.id} not found`)
+        //throw new Error(`Artist with id ${params.id} not found`)
+        return response.status(404).json({ message : `Artist with id ${params.id} not foound`})
       }
 
       await Artist.destroy({
@@ -117,7 +126,7 @@ module.exports = {
   
       response
         .status(statusCode)
-        //.send() //<-- error! esto provoca que se cuelgue el servidor. Debemos usar send() o json() para cortar la conexión.
+        .send() //<-- error! esto provoca que se cuelgue el servidor. Debemos usar send() o json() para cortar la conexión.
 
         /*
           ¿Qué nivel de pruebas es el indicado para NUNCA MÁS COMETER ESTE ERROR?
